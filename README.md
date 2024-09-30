@@ -1,2 +1,2 @@
 # Project-1-Roman-Numeral-Calculator-
-The Roman Numeral Calculator is a command-line tool written in Python that allows users to perform basic arithmetic operations using Roman numerals. 
+The Roman Numeral Calculator is a command-line tool written in Python that allows users to perform basic arithmetic operations using Roman numerals. This project supports addition, subtraction, multiplication, and division while adhering to the specific constraints of the Roman numeral system (no zero, fractions, negative values, or numbers above 3,999). The calculator can parse complex expressions with grouping operators such as parentheses () and square brackets [] while respecting the order of operations.
