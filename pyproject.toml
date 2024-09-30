@@ -1,0 +1,9 @@
+[tool.poetry]
+name = "roman_calculator"
+version = "0.1.0"
+description = "A calculator that works with Roman numerals"
+authors = Sydnie Johnson
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
