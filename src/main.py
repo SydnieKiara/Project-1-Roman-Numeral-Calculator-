@@ -1,5 +1,8 @@
 # src/main.py
 
+# src/main.py
+
+import re
 import sys
 
 roman_numerals = {
@@ -9,12 +12,6 @@ roman_numerals = {
 def roman_to_int(s):
     """
     Convert a Roman numeral to an integer.
-
-    Args:
-        s (str): The Roman numeral string.
-
-    Returns:
-        int: The integer representation of the Roman numeral.
     """
     total = 0
     prev_value = 0
@@ -30,12 +27,6 @@ def roman_to_int(s):
 def int_to_roman(num):
     """
     Convert an integer to a Roman numeral.
-
-    Args:
-        num (int): The integer to convert.
-
-    Returns:
-        str: The Roman numeral representation of the integer.
     """
     val = [
         1000, 900, 500, 400,
@@ -61,18 +52,42 @@ def int_to_roman(num):
 def calculate(expression):
     """
     Calculate the result of a mathematical expression in Roman numerals.
-
-    Args:
-        expression (str): The mathematical expression in Roman numerals.
-
-    Returns:
-        str: The result of the calculation in Roman numerals.
     """
-    # Implement the logic to parse and calculate the expression
-    # This is a placeholder for the actual implementation
-    return "XXV"
+    # Remove spaces from the expression
+    expression = expression.replace(" ", "")
+
+    # Regex to split Roman numerals and operators (+, -, *, /)
+    tokens = re.findall(r'[IVXLCDM]+|\+|\-|\*|\/', expression)
+
+    # Convert Roman numerals to integers and keep track of operations
+    operands = []
+    operators = []
+
+    for token in tokens:
+        if token in roman_numerals:  # It's a Roman numeral
+            operands.append(roman_to_int(token))
+        else:  # It's an operator
+            operators.append(token)
+
+    # Start with the first operand
+    result = operands[0]
+
+    # Perform operations in order of appearance (for simplicity)
+    for i, operator in enumerate(operators):
+        if operator == '+':
+            result += operands[i + 1]
+        elif operator == '-':
+            result -= operands[i + 1]
+        elif operator == '*':
+            result *= operands[i + 1]
+        elif operator == '/':
+            result //= operands[i + 1]  # Use floor division to avoid decimals
+
+    # Convert the result back to a Roman numeral
+    return int_to_roman(result)
 
 if __name__ == "__main__":
     expression = " ".join(sys.argv[1:])
     result = calculate(expression)
     print(result)
+
