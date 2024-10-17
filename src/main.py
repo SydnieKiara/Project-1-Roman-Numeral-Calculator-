@@ -3,6 +3,7 @@
 import re
 import sys
 
+# A dictionary mapping Roman numeral symbols to their integer values
 roman_numerals = {
     'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000
 }
@@ -26,15 +27,15 @@ def roman_to_int(s):
     """
     total = 0
     prev_value = 0
-    for char in reversed(s):
+    for char in reversed(s):  # Iterate over the Roman numeral string in reverse
         value = roman_numerals.get(char, None)
         if value is None:
             raise ValueError(f"Invalid Roman numeral character: {char}")
-        if value < prev_value:
+        if value < prev_value:  # If current numeral is smaller, subtract it
             total -= value
-        else:
+        else:  # Otherwise, add it
             total += value
-        prev_value = value
+        prev_value = value  # Update the previous numeral value for the next iteration
     return total
 
 def int_to_roman(num):
@@ -71,10 +72,11 @@ def int_to_roman(num):
     ]
     roman_num = ''
     i = 0
+    # Loop over the value-symbol pairs and construct the Roman numeral
     while num > 0:
-        for _ in range(num // val[i]):
-            roman_num += syb[i]
-            num -= val[i]
+        for _ in range(num // val[i]):  # For each multiple of the value
+            roman_num += syb[i]  # Append the corresponding symbol
+            num -= val[i]  # Subtract the value from the number
         i += 1
     return roman_num
 
@@ -84,12 +86,14 @@ def calculate(expression):
 
     This function parses an expression containing Roman numerals and basic arithmetic
     operators (+, -, *, /), calculates the result, and returns the result in Roman numeral form.
+    If the expression is just a single Roman numeral, it returns the integer value of the numeral.
 
     Args:
         expression (str): A mathematical expression using Roman numerals (e.g., 'X + V - II').
 
     Returns:
-        str: The result of the expression, represented as a Roman numeral.
+        str or int: The result of the expression, represented as a Roman numeral string or
+                    an integer if the input is a single Roman numeral.
 
     Raises:
         ValueError: If the expression is empty or contains invalid Roman numerals or operators.
@@ -98,9 +102,14 @@ def calculate(expression):
     Example:
         calculate('X + V') -> 'XV'
         calculate('X * II') -> 'XX'
+        calculate('X') -> 10  # Single Roman numeral case
     """
     # Remove spaces from the expression
     expression = expression.replace(" ", "")
+    
+    # If the entire expression is a single Roman numeral, convert and return it as an integer
+    if re.match(r'^[IVXLCDM]+$', expression):
+        return roman_to_int(expression)
 
     # Regex to split Roman numerals and operators (+, -, *, /)
     tokens = re.findall(r'[IVXLCDM]+|\+|\-|\*|\/', expression)
@@ -112,6 +121,7 @@ def calculate(expression):
     operands = []
     operators = []
 
+    # Parse tokens into operands and operators
     for token in tokens:
         if token in roman_numerals or re.match(r'[IVXLCDM]+', token):  # It's a Roman numeral
             operands.append(roman_to_int(token))
@@ -120,6 +130,7 @@ def calculate(expression):
         else:
             raise ValueError(f"Invalid token in expression: {token}")
 
+    # Check for valid operand-operator pairing
     if not operands:
         raise ValueError("No Roman numerals in expression")
 
@@ -129,7 +140,7 @@ def calculate(expression):
     # Start with the first operand
     result = operands[0]
 
-    # Perform operations in order of appearance (for simplicity)
+    # Perform operations in the order of appearance (no operator precedence here)
     for i, operator in enumerate(operators):
         if operator == '+':
             result += operands[i + 1]
@@ -142,32 +153,29 @@ def calculate(expression):
                 raise ZeroDivisionError("Cannot divide by zero")
             result //= operands[i + 1]  # Use floor division to avoid decimals
 
-    # Convert the result back to a Roman numeral
+    # Convert the result back to a Roman numeral and return
     return int_to_roman(result)
 
 if __name__ == "__main__":
     """
-    Main function to run the script from the command line. 
-    It expects a Roman numeral expression as an argument.
+    Main function to run the script from the command line.
+    It expects a Roman numeral expression as an argument and calculates the result.
 
     Usage:
         python main.py "X + V"
-    
-    Args:
-        expression (str): A Roman numeral expression passed from the command line.
 
     Example:
         python main.py "X + II" -> XV
+        python main.py "X" -> 10
     """
     if len(sys.argv) < 2:
         print("Usage: python main.py '<expression>'")
         sys.exit(1)
 
-    expression = " ".join(sys.argv[1:])
+    expression = " ".join(sys.argv[1:])  # Combine the command line arguments into a single string
     try:
         result = calculate(expression)
         print(result)
     except Exception as e:
         print(f"Error: {e}")
         sys.exit(1)
-
